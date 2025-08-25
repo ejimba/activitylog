@@ -8,7 +8,7 @@ use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Rmsramos\Activitylog\ActivitylogPlugin;
-use Rmsramos\Activitylog\Resources\ActivitylogResource;
+use Rmsramos\Activitylog\Resources\Activitylogs\ActivitylogResource;
 
 class ActivitylogRelationManager extends RelationManager
 {
