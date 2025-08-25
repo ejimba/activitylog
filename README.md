@@ -146,7 +146,7 @@ public function panel(Panel $panel): Panel
 
 ## Customising the ActivitylogResource
 
-You can swap out the `ActivitylogResource` used by updating the `->resource()` value. Use this to create your own `CustomResource` class and extend the original at `\Rmsramos\Activitylog\Resources\ActivitylogResource::class`. This will allow you to customise everything such as the views, table, form and permissions.
+You can swap out the `ActivitylogResource` used by updating the `->resource()` value. Use this to create your own `CustomResource` class and extend the original at `\Rmsramos\Activitylog\Resources\Activitylogs\ActivitylogResource::class`. This will allow you to customise everything such as the views, table, form and permissions.
 
 > [!NOTE]
 > If you wish to change the resource on List and View page be sure to replace the `getPages` method on the new resource and create your own version of the `ListPage` and `ViewPage` classes to reference the custom `CustomResource`.
