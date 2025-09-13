@@ -41,9 +41,9 @@
                 </x-filament::grid>
             </ol>
         @elseif (($placeholder = $getPlaceholder()) !== null)
-            <x-filament-infolists::entries.placeholder>
+            <x-filament-infolists::entries.wrapper>
                 {{ $placeholder }}
-            </x-filament-infolists::entries.placeholder>
+            </x-filament-infolists::entries.wrapper>
         @endif
     </div>
 </x-dynamic-component>
