@@ -18,7 +18,7 @@
     >
         @if (count($childComponentContainers = $getChildComponentContainers()))
             <ol class="relative border-gray-200 border-s dark:border-gray-700">
-                <x-filament::grid
+                <x-filament-schemas::grid
                     :default="$getGridColumns('default')"
                     :sm="$getGridColumns('sm')"
                     :md="$getGridColumns('md')"
@@ -38,7 +38,7 @@
                             {{ $container }}
                         </li>
                     @endforeach
-                </x-filament::grid>
+                </x-filament-schemas::grid>
             </ol>
         @elseif (($placeholder = $getPlaceholder()) !== null)
             <x-filament-infolists::entry-wrapper>
