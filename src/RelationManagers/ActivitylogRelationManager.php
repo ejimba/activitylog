@@ -26,7 +26,7 @@ class ActivitylogRelationManager extends RelationManager
 
     public function form(Schema $schema): Schema
     {
-        return ActivitylogResource::schema($schema);
+        return ActivitylogResource::form($schema);
     }
 
     public function table(Table $table): Table
