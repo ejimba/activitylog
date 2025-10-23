@@ -2,13 +2,13 @@
 
 namespace Rmsramos\Activitylog\RelationManagers;
 
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
 use Filament\Actions\ViewAction;
-use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Rmsramos\Activitylog\ActivitylogPlugin;
-use Rmsramos\Activitylog\Resources\ActivitylogResource\ActivitylogResource;
+use Rmsramos\Activitylog\Resources\Activitylogs\ActivitylogResource;
 
 class ActivitylogRelationManager extends RelationManager
 {
