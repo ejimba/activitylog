@@ -2,33 +2,23 @@
 
 return [
     'columns' => [
-        'log_name' => [
-            'label' => 'סוג',
-        ],
-        'event' => [
-            'label' => 'אירוע',
-        ],
-        'subject_type' => [
-            'label' => 'נושא',
-        ],
-        'causer' => [
-            'label' => 'משתמש',
-        ],
-        'properties' => [
-            'label' => 'מאפיינים',
-        ],
-        'created_at' => [
-            'label' => 'נוצר',
-        ],
+        'event'       => 'אירוע',
+        'subject'     => 'נושא',
+        'causer'      => 'משתמש',
+        'description' => 'תיאור',
+        'created_at'  => 'תאריך',
+        'properties'  => 'שינויים',
+        'batch'       => 'אצווה',
+        'log_name'    => 'שם היומן',
     ],
-    'filters' => [
-        'created_at' => [
-            'label'         => 'נוצר',
-            'created_from'  => 'נוצר מ',
-            'created_until' => 'נוצר עד',
-        ],
-        'event' => [
-            'label' => 'אירוע',
-        ],
-    ],
+    'field'         => 'שדה',
+    'old'           => 'ערך ישן',
+    'new'           => 'ערך חדש',
+    'restore'       => 'שחזר',
+    'restoring'     => 'משחזר...',
+    'empty'         => 'ריק',
+    'true'          => 'אמת',
+    'false'         => 'שקר',
+    'no_changes'    => 'לא נרשמו שינויים לפעילות זו.',
+    'no_activities' => 'טרם נרשמו פעילויות.',
 ];

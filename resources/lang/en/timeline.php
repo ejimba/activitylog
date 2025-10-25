@@ -1,14 +1,17 @@
 <?php
+
 return [
-    'title' => [
-        'modifiedTitle' => 'The <strong>%s</strong> was <strong>%s</strong> by <strong>%s</strong>. <br><small> Updated at: <strong>%s</strong></small>',
+    'modal' => [
+        'heading'     => 'Activity Timeline',
+        'description' => 'View the complete history of changes for this record.',
     ],
-    'properties' => [
-        'modifiedProperties'     => '%s %s the following: <br>%s',
-        'compareOldAndNewValues' => [
-            'notEquals' => '- %s from <strong>%s</strong> to <strong>%s</strong>',
-            'equals'    => '- %s <strong>%s</strong>',
-        ],
-        'getNewValues' => '- %s <strong>%s</strong>',
-    ],
+    'action_label'       => 'Activity Timeline',
+    'title'              => '<strong>:subject</strong> :event by <strong>:causer</strong> :timestamp',
+    'properties_updated' => '<strong>:causer</strong> :event:<br>:changes',
+    'change_from_to'     => '<strong>:field</strong>: from "<em>:old</em>" to "<em>:new</em>"',
+    'set_to'             => '<strong>:field</strong>: set to "<em>:value</em>"',
+    'unknown_user'       => 'Unknown User',
+    'unknown_subject'    => 'Unknown',
+    'system'             => 'System',
+    'empty'              => 'No activity has been recorded yet.',
 ];

@@ -1,14 +1,17 @@
 <?php
+
 return [
-    'title' => [
-        'modifiedTitle' => 'The <strong>%s</strong> was <strong>%s</strong> by <strong>%s</strong>. <br><small> Updated at: <strong>%s</strong></small>',
+    'modal' => [
+        'heading'     => 'Oś czasu aktywności',
+        'description' => 'Zobacz pełną historię zmian dla tego rekordu.',
     ],
-    'properties' => [
-        'modifiedProperties'     => '%s %s the following: <br>%s',
-        'compareOldAndNewValues' => [
-            'notEquals' => '- %s from <strong>%s</strong> to <strong>%s</strong>',
-            'equals'    => '- %s <strong>%s</strong>',
-        ],
-        'getNewValues' => '- %s <strong>%s</strong>',
-    ],
+    'action_label'       => 'Oś czasu aktywności',
+    'title'              => '<strong>:subject</strong> :event przez <strong>:causer</strong> :timestamp',
+    'properties_updated' => '<strong>:causer</strong> :event:<br>:changes',
+    'change_from_to'     => '<strong>:field</strong>: z "<em>:old</em>" na "<em>:new</em>"',
+    'set_to'             => '<strong>:field</strong>: ustawiono na "<em>:value</em>"',
+    'unknown_user'       => 'Nieznany użytkownik',
+    'unknown_subject'    => 'Nieznany',
+    'system'             => 'System',
+    'empty'              => 'Nie zarejestrowano jeszcze żadnej aktywności.',
 ];

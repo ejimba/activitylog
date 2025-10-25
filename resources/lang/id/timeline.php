@@ -1,14 +1,17 @@
 <?php
+
 return [
-    'title' => [
-        'modifiedTitle' => 'The <strong>%s</strong> was <strong>%s</strong> by <strong>%s</strong>. <br><small> Updated at: <strong>%s</strong></small>',
+    'modal' => [
+        'heading'     => 'Linimasa Aktivitas',
+        'description' => 'Lihat riwayat perubahan lengkap untuk entri ini.',
     ],
-    'properties' => [
-        'modifiedProperties'     => '%s %s the following: <br>%s',
-        'compareOldAndNewValues' => [
-            'notEquals' => '- %s from <strong>%s</strong> to <strong>%s</strong>',
-            'equals'    => '- %s <strong>%s</strong>',
-        ],
-        'getNewValues' => '- %s <strong>%s</strong>',
-    ],
+    'action_label'       => 'Linimasa Aktivitas',
+    'title'              => '<strong>:subject</strong> :event oleh <strong>:causer</strong> :timestamp',
+    'properties_updated' => '<strong>:causer</strong> :event:<br>:changes',
+    'change_from_to'     => '<strong>:field</strong>: dari "<em>:old</em>" menjadi "<em>:new</em>"',
+    'set_to'             => '<strong>:field</strong>: disetel ke "<em>:value</em>"',
+    'unknown_user'       => 'Pengguna Tidak Dikenal',
+    'unknown_subject'    => 'Tidak Dikenal',
+    'system'             => 'Sistem',
+    'empty'              => 'Belum ada aktivitas yang tercatat.',
 ];

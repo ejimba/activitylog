@@ -1,14 +1,17 @@
 <?php
+
 return [
-    'title' => [
-        'modifiedTitle' => '<strong>%s</strong> tika <strong>%s</strong> ar lietotāju <strong>%s</strong>. <br><small> Atjaunots: <strong>%s</strong></small>',
+    'modal' => [
+        'heading'     => 'Aktivitāšu hronoloģija',
+        'description' => 'Skatīt pilnu šī ieraksta izmaiņu vēsturi.',
     ],
-    'properties' => [
-        'modifiedProperties'     => '%s %s sekojošu: <br>%s',
-        'compareOldAndNewValues' => [
-            'notEquals' => '- %s no <strong>%s</strong> uz <strong>%s</strong>',
-            'equals'    => '- %s <strong>%s</strong>',
-        ],
-        'getNewValues' => '- %s <strong>%s</strong>',
-    ],
+    'action_label'       => 'Aktivitāšu hronoloģija',
+    'title'              => '<strong>:subject</strong> :event, veica <strong>:causer</strong> :timestamp',
+    'properties_updated' => '<strong>:causer</strong> :event:<br>:changes',
+    'change_from_to'     => '<strong>:field</strong>: no "<em>:old</em>" uz "<em>:new</em>"',
+    'set_to'             => '<strong>:field</strong>: iestatīts uz "<em>:value</em>"',
+    'unknown_user'       => 'Nezināms lietotājs',
+    'unknown_subject'    => 'Nezināms',
+    'system'             => 'Sistēma',
+    'empty'              => 'Pagaidām nav reģistrētu aktivitāšu.',
 ];

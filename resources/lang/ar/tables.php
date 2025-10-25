@@ -2,33 +2,23 @@
 
 return [
     'columns' => [
-        'log_name' => [
-            'label' => 'النوع',
-        ],
-        'event' => [
-            'label' => 'الحدث',
-        ],
-        'subject_type' => [
-            'label' => 'الموضوع',
-        ],
-        'causer' => [
-            'label' => 'المستخدم',
-        ],
-        'properties' => [
-            'label' => 'الخصائص',
-        ],
-        'created_at' => [
-            'label' => 'تاريخ التسجيل',
-        ],
+        'event'       => 'الحدث',
+        'subject'     => 'الموضوع',
+        'causer'      => 'المستخدم',
+        'description' => 'الوصف',
+        'created_at'  => 'التاريخ',
+        'properties'  => 'التغييرات',
+        'batch'       => 'الدفعة',
+        'log_name'    => 'اسم السجل',
     ],
-    'filters' => [
-        'created_at' => [
-            'label'         => 'تاريخ التسجيل',
-            'created_from'  => 'تاريخ الإنشاء من',
-            'created_until' => 'تاريخ الإنشاء حتى',
-        ],
-        'event' => [
-            'label' => 'الحدث',
-        ],
-    ],
+    'field'         => 'الحقل',
+    'old'           => 'القيمة القديمة',
+    'new'           => 'القيمة الجديدة',
+    'restore'       => 'استعادة',
+    'restoring'     => 'جارٍ الاستعادة...',
+    'empty'         => 'فارغ',
+    'true'          => 'صحيح',
+    'false'         => 'خطأ',
+    'no_changes'    => 'لم يتم تسجيل أي تغييرات لهذه العملية.',
+    'no_activities' => 'لم يتم تسجيل أي أنشطة بعد.',
 ];

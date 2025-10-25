@@ -1,34 +1,23 @@
 <?php
-
 return [
     'columns' => [
-        'log_name' => [
-            'label' => 'Type',
-        ],
-        'event' => [
-            'label' => 'Event',
-        ],
-        'subject_type' => [
-            'label' => 'Onderwerp',
-        ],
-        'causer' => [
-            'label' => 'Gebruiker',
-        ],
-        'properties' => [
-            'label' => 'Velden',
-        ],
-        'created_at' => [
-            'label' => 'Gelogd op',
-        ],
+        'event'       => 'Gebeurtenis',
+        'subject'     => 'Onderwerp',
+        'causer'      => 'Gebruiker',
+        'description' => 'Omschrijving',
+        'created_at'  => 'Datum',
+        'properties'  => 'Wijzigingen',
+        'batch'       => 'Batch',
+        'log_name'    => 'Lognaam',
     ],
-    'filters' => [
-        'created_at' => [
-            'label'         => 'Gelogd op',
-            'created_from'  => 'Aangemaakt van ',
-            'created_until' => 'Aangemaakt tot ',
-        ],
-        'event' => [
-            'label' => 'Event',
-        ],
-    ],
+    'field'         => 'Veld',
+    'old'           => 'Oude waarde',
+    'new'           => 'Nieuwe waarde',
+    'restore'       => 'Herstellen',
+    'restoring'     => 'Bezig met herstellen...',
+    'empty'         => 'Leeg',
+    'true'          => 'Waar',
+    'false'         => 'Onwaar',
+    'no_changes'    => 'Er zijn geen wijzigingen geregistreerd voor deze activiteit.',
+    'no_activities' => 'Er zijn nog geen activiteiten geregistreerd.',
 ];

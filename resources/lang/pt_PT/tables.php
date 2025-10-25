@@ -1,34 +1,23 @@
 <?php
-
 return [
     'columns' => [
-        'log_name' => [
-            'label' => 'Tipo',
-        ],
-        'event' => [
-            'label' => 'Evento',
-        ],
-        'subject_type' => [
-            'label' => 'Assunto',
-        ],
-        'causer' => [
-            'label' => 'Utilizador',
-        ],
-        'properties' => [
-            'label' => 'Propriedades',
-        ],
-        'created_at' => [
-            'label' => 'Criado em',
-        ],
+        'event'       => 'Evento',
+        'subject'     => 'Assunto',
+        'causer'      => 'Utilizador',
+        'description' => 'Descri\u00e7\u00e3o',
+        'created_at'  => 'Data',
+        'properties'  => 'Altera\u00e7\u00f5es',
+        'batch'       => 'Lote',
+        'log_name'    => 'Nome do log',
     ],
-    'filters' => [
-        'created_at' => [
-            'label'         => 'Criado em',
-            'created_from'  => 'Criado a partir de ',
-            'created_until' => 'Criado até ',
-        ],
-        'event' => [
-            'label' => 'Eventos',
-        ],
-    ],
+    'field'         => 'Campo',
+    'old'           => 'Valor antigo',
+    'new'           => 'Novo valor',
+    'restore'       => 'Restaurar',
+    'restoring'     => 'A restaurar...',
+    'empty'         => 'Vazio',
+    'true'          => 'Verdadeiro',
+    'false'         => 'Falso',
+    'no_changes'    => 'N\u00e3o foram registadas altera\u00e7\u00f5es para esta atividade.',
+    'no_activities' => 'Ainda n\u00e3o existem atividades registadas.',
 ];

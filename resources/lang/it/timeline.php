@@ -1,14 +1,17 @@
 <?php
+
 return [
-    'title' => [
-        'modifiedTitle' => 'The <strong>%s</strong> was <strong>%s</strong> by <strong>%s</strong>. <br><small> Updated at: <strong>%s</strong></small>',
+    'modal' => [
+        'heading'     => 'Cronologia attività',
+        'description' => 'Visualizza la cronologia completa delle modifiche per questo record.',
     ],
-    'properties' => [
-        'modifiedProperties'     => '%s %s the following: <br>%s',
-        'compareOldAndNewValues' => [
-            'notEquals' => '- %s from <strong>%s</strong> to <strong>%s</strong>',
-            'equals'    => '- %s <strong>%s</strong>',
-        ],
-        'getNewValues' => '- %s <strong>%s</strong>',
-    ],
+    'action_label'       => 'Cronologia attività',
+    'title'              => '<strong>:subject</strong> :event da <strong>:causer</strong> :timestamp',
+    'properties_updated' => '<strong>:causer</strong> :event:<br>:changes',
+    'change_from_to'     => '<strong>:field</strong>: da "<em>:old</em>" a "<em>:new</em>"',
+    'set_to'             => '<strong>:field</strong>: impostato a "<em>:value</em>"',
+    'unknown_user'       => 'Utente sconosciuto',
+    'unknown_subject'    => 'Sconosciuto',
+    'system'             => 'Sistema',
+    'empty'              => 'Non è stata ancora registrata alcuna attività.',
 ];

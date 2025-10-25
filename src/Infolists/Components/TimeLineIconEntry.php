@@ -4,8 +4,10 @@ namespace Rmsramos\Activitylog\Infolists\Components;
 
 use Filament\Infolists\Components\IconEntry;
 
-class TimeLineIconEntry extends IconEntry
+class TimelineIconEntry extends IconEntry
 {
+    protected string $view = 'filament-activitylog::filament.infolists.components.time-line-icon-entry';
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -13,9 +15,10 @@ class TimeLineIconEntry extends IconEntry
         $this->configureIconEntry();
     }
 
-    protected string $view = 'activitylog::filament.infolists.components.time-line-icon-entry';
-
-    protected function configureIconEntry()
+    /**
+     * Configure the icon entry with default settings.
+     */
+    protected function configureIconEntry(): void
     {
         $this
             ->hiddenLabel()

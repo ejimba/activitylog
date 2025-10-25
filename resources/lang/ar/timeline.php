@@ -1,14 +1,17 @@
 <?php
+
 return [
-    'title' => [
-        'modifiedTitle' => 'تم تعديل <strong>%s</strong> بواسطة <strong>%s</strong>. <br><small> تم التحديث في: <strong>%s</strong></small>',
+    'modal' => [
+        'heading'     => 'الخط الزمني للنشاط',
+        'description' => 'عرض التاريخ الكامل للتغييرات لهذا السجل.',
     ],
-    'properties' => [
-        'modifiedProperties'     => 'تم تعديل الخصائص التالية بواسطة %s: <br>%s',
-        'compareOldAndNewValues' => [
-            'notEquals' => '- %s من <strong>%s</strong> إلى <strong>%s</strong>',
-            'equals'    => '- %s <strong>%s</strong>',
-        ],
-        'getNewValues' => '- %s <strong>%s</strong>',
-    ],
+    'action_label'       => 'الخط الزمني للنشاط',
+    'title'              => '<strong>:subject</strong> :event بواسطة <strong>:causer</strong> :timestamp',
+    'properties_updated' => '<strong>:causer</strong> :event:<br>:changes',
+    'change_from_to'     => '<strong>:field</strong>: من "<em>:old</em>" إلى "<em>:new</em>"',
+    'set_to'             => '<strong>:field</strong>: تم تعيينه إلى "<em>:value</em>"',
+    'unknown_user'       => 'مستخدم غير معروف',
+    'unknown_subject'    => 'غير معروف',
+    'system'             => 'النظام',
+    'empty'              => 'لم يتم تسجيل أي نشاط بعد.',
 ];

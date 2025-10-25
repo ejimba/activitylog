@@ -1,14 +1,17 @@
 <?php
+
 return [
-    'title' => [
-        'modifiedTitle' => 'The <strong>%s</strong> was <strong>%s</strong> by <strong>%s</strong>. <br><small> Updated at: <strong>%s</strong></small>',
+    'modal' => [
+        'heading'     => 'خط زمانی فعالیت',
+        'description' => 'نمایش تاریخچه کامل تغییرات این رکورد.',
     ],
-    'properties' => [
-        'modifiedProperties'     => '%s %s the following: <br>%s',
-        'compareOldAndNewValues' => [
-            'notEquals' => '- %s from <strong>%s</strong> to <strong>%s</strong>',
-            'equals'    => '- %s <strong>%s</strong>',
-        ],
-        'getNewValues' => '- %s <strong>%s</strong>',
-    ],
+    'action_label'       => 'خط زمانی فعالیت',
+    'title'              => '<strong>:subject</strong> :event توسط <strong>:causer</strong> :timestamp',
+    'properties_updated' => '<strong>:causer</strong> :event:<br>:changes',
+    'change_from_to'     => '<strong>:field</strong>: از "<em>:old</em>" به "<em>:new</em>"',
+    'set_to'             => '<strong>:field</strong>: به "<em>:value</em>" تنظیم شد',
+    'unknown_user'       => 'کاربر ناشناس',
+    'unknown_subject'    => 'نامشخص',
+    'system'             => 'سیستم',
+    'empty'              => 'هنوز هیچ فعالیتی ثبت نشده است.',
 ];

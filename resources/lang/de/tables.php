@@ -2,33 +2,23 @@
 
 return [
     'columns' => [
-        'log_name' => [
-            'label' => 'Typ',
-        ],
-        'event' => [
-            'label' => 'Ereignis',
-        ],
-        'subject_type' => [
-            'label' => 'Betreff',
-        ],
-        'causer' => [
-            'label' => 'Benutzer',
-        ],
-        'properties' => [
-            'label' => 'Attribute',
-        ],
-        'created_at' => [
-            'label' => 'Logzeitpunkt',
-        ],
+        'event'       => 'Ereignis',
+        'subject'     => 'Betreff',
+        'causer'      => 'Benutzer',
+        'description' => 'Beschreibung',
+        'created_at'  => 'Datum',
+        'properties'  => 'Änderungen',
+        'batch'       => 'Batch',
+        'log_name'    => 'Protokollname',
     ],
-    'filters' => [
-        'created_at' => [
-            'label'         => 'Logzeitpunkt',
-            'created_from'  => 'Geloggt von ',
-            'created_until' => 'Geloggt bis',
-        ],
-        'event' => [
-            'label' => 'Ereignis',
-        ],
-    ],
+    'field'         => 'Feld',
+    'old'           => 'Alter Wert',
+    'new'           => 'Neuer Wert',
+    'restore'       => 'Wiederherstellen',
+    'restoring'     => 'Wiederherstellung...',
+    'empty'         => 'Leer',
+    'true'          => 'Wahr',
+    'false'         => 'Falsch',
+    'no_changes'    => 'Für diese Aktivität wurden keine Änderungen aufgezeichnet.',
+    'no_activities' => 'Bisher wurden keine Aktivitäten aufgezeichnet.',
 ];

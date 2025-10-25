@@ -4,15 +4,20 @@ namespace Rmsramos\Activitylog\Infolists\Components;
 
 use Filament\Infolists\Components\RepeatableEntry;
 
-class TimeLineRepeatableEntry extends RepeatableEntry
+class TimelineRepeatableEntry extends RepeatableEntry
 {
-    protected function setup(): void
+    protected string $view = 'filament-activitylog::filament.infolists.components.time-line-repeatable-entry';
+
+    protected function setUp(): void
     {
-        parent::setup();
+        parent::setUp();
 
         $this->configureRepeatableEntry();
     }
 
+    /**
+     * Configure the repeatable entry with default settings.
+     */
     protected function configureRepeatableEntry(): void
     {
         $this
@@ -20,6 +25,4 @@ class TimeLineRepeatableEntry extends RepeatableEntry
             ->contained(false)
             ->hiddenLabel();
     }
-
-    protected string $view = 'activitylog::filament.infolists.components.time-line-repeatable-entry';
 }

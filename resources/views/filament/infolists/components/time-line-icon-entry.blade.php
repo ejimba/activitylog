@@ -1,57 +1,65 @@
 @php
     use Filament\Support\Enums\IconSize;
+    use Illuminate\Support\Arr;
+
+    $iconColorMap = [
+        'success' => 'rgb(255 255 255)',
+        'info' => 'rgb(255 255 255)',
+        'warning' => 'rgb(255 255 255)',
+        'danger' => 'rgb(255 255 255)',
+        'gray' => 'rgb(255 255 255)',
+        'primary' => 'rgb(255 255 255)',
+    ];
+
+    $bgColorMap = [
+        'success' => 'rgb(34 197 94)',
+        'info' => 'rgb(59 130 246)',
+        'warning' => 'rgb(251 146 60)',
+        'danger' => 'rgb(239 68 68)',
+        'gray' => 'rgb(156 163 175)',
+        'primary' => 'rgb(99 102 241)',
+    ];
 @endphp
 
 <x-dynamic-component :component="$getEntryWrapperView()" :entry="$entry">
-    <div
-        {{
-            $attributes
-                ->merge($getExtraAttributes(), escape: false)
-                ->class([
-                    'absolute flex items-center justify-center w-6 h-6 bg-gray-200 rounded-full -start-3 ring-4 ring-white dark:bg-gray-700 dark:ring-gray-900',
-                ])
-        }}
-    >
-        @if (count($arrayState = \Illuminate\Support\Arr::wrap($getState())))
-            @foreach ($arrayState as $state)
-                @if ($icon = $getIcon($state))
-                    @php
-                        $color = $getColor($state) ?? 'gray';
-                        $size = $getSize($state) ?? IconSize::Large;
-                    @endphp
+    @php
+        $arrayState = Arr::wrap($getState());
+        $state = $arrayState[0] ?? null;
+    @endphp
 
-                    <x-filament::icon
-                        :icon="$icon"
-                        @class([
-                            'fi-in-icon-item',
-                            match ($size) {
-                                IconSize::ExtraSmall, 'xs' => 'fi-in-icon-item-size-xs h-3 w-3',
-                                IconSize::Small, 'sm' => 'fi-in-icon-item-size-sm h-4 w-4',
-                                IconSize::Medium, 'md' => 'fi-in-icon-item-size-md h-5 w-5',
-                                IconSize::Large, 'lg' => 'fi-in-icon-item-size-lg h-6 w-6',
-                                IconSize::ExtraLarge, 'xl' => 'fi-in-icon-item-size-xl h-7 w-7',
-                                IconSize::TwoExtraLarge, IconSize::ExtraExtraLarge, '2xl' => 'fi-in-icon-item-size-2xl h-8 w-8',
-                                default => $size,
-                            },
-                            match ($color) {
-                                'gray' => 'fi-color-gray text-gray-400 dark:text-gray-500',
-                                default => 'fi-color-custom text-custom-500 dark:text-custom-400',
-                            },
-                        ])
-                        @style([
-                            \Filament\Support\get_color_css_variables(
-                                $color,
-                                shades: [400, 500],
-                                alias: 'infolists::components.icon-entry.item',
-                            ) => $color !== 'gray',
-                        ])
-                    />
-                @endif
-            @endforeach
-        @elseif (($placeholder = $getPlaceholder()) !== null)
-            <div class="fi-in-placeholder">
-                {{ $placeholder }}
-            </div>
-        @endif
-    </div>
+    @if ($state && ($icon = $getIcon($state)))
+        @php
+            $color = $getColor($state) ?? 'gray';
+            $iconColor = $iconColorMap[$color] ?? $iconColorMap['gray'];
+            $bgColor = $bgColorMap[$color] ?? $bgColorMap['gray'];
+            $size = $getSize($state) ?? IconSize::Small;
+
+            $iconSize = match (true) {
+                $size === IconSize::ExtraSmall || $size === 'xs' => '0.75rem',
+                $size === IconSize::Small || $size === 'sm' => '1.25rem',
+                $size === IconSize::Medium || $size === 'md' => '1.5rem',
+                $size === IconSize::Large || $size === 'lg' => '1.75rem',
+                $size === IconSize::ExtraLarge || $size === 'xl' => '2rem',
+                $size === IconSize::TwoExtraLarge || $size === IconSize::ExtraExtraLarge || $size === '2xl' => '2.25rem',
+                default => '1.25rem',
+            };
+        @endphp
+
+        <div
+            style="position: absolute; left: calc(var(--tl-pl) * -1 - var(--tl-dot-size) / 2 - 1px); top: calc((var(--tl-line-h) - var(--tl-dot-size)) / 2); display: flex; align-items: center; justify-content: center; width: var(--tl-dot-size); height: var(--tl-dot-size); background-color: {{ $bgColor }}; border-radius: 9999px;"
+            {{
+                $attributes
+                    ->merge($getExtraAttributes(), escape: false)
+            }}
+        >
+            <x-filament::icon
+                :icon="$icon"
+                style="width: calc(var(--tl-dot-size) - 0.375rem); height: calc(var(--tl-dot-size) - 0.375rem); color: {{ $iconColor }};"
+            />
+        </div>
+    @elseif (($placeholder = $getPlaceholder()) !== null)
+        <x-filament-infolists::entry-wrapper>
+            {{ $placeholder }}
+        </x-filament-infolists::entry-wrapper>
+    @endif
 </x-dynamic-component>

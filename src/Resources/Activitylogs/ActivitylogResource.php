@@ -2,306 +2,376 @@
 
 namespace Rmsramos\Activitylog\Resources\Activitylogs;
 
-use Exception;
-use Filament\Facades\Filament;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Placeholder;
-use Filament\Notifications\Notification;
+use BackedEnum;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\ViewAction;
+use Filament\Forms;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Tables\Columns\Column;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Tables;
 use Filament\Tables\Columns\ViewColumn;
-use Filament\Tables\Filters\Filter;
-use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\HtmlString;
-use Illuminate\Support\Str;
-use Livewire\Component as Livewire;
-use Rmsramos\Activitylog\Actions\Concerns\ActionContent;
+use Rmsramos\Activitylog\Actions\ViewBatchTableAction;
 use Rmsramos\Activitylog\ActivitylogPlugin;
 use Rmsramos\Activitylog\Helpers\ActivityLogHelper;
-use Rmsramos\Activitylog\RelationManagers\ActivitylogRelationManager;
-use Rmsramos\Activitylog\Resources\Activitylogs\Pages\ListActivitylog;
-use Rmsramos\Activitylog\Resources\Activitylogs\Pages\ViewActivitylog;
-use Rmsramos\Activitylog\Resources\Activitylogs\Schemas\ActivitylogForm;
-use Rmsramos\Activitylog\Traits\HasCustomActivityResource;
-use Spatie\Activitylog\Models\Activity;
+use UnitEnum;
 
 class ActivitylogResource extends Resource
 {
-    use ActionContent;
+    protected static ?string $model = null;
 
     protected static ?string $slug = 'activitylogs';
 
+    protected static ?string $recordTitleAttribute = 'description';
+
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-clipboard-document-list';
+
+    protected static string|UnitEnum|null $navigationGroup = 'Administration';
+
+    protected static ?int $navigationSort = 100;
+
+    protected static function plugin(): ActivitylogPlugin
+    {
+        return ActivitylogPlugin::get();
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return parent::shouldRegisterNavigation() && static::plugin()->getNavigationItem();
+    }
+
     public static function getModel(): string
     {
-        return config('activitylog.activity_model', Activity::class);
-    }
-
-    public static function getModelLabel(): string
-    {
-        return ActivitylogPlugin::get()->getLabel();
-    }
-
-    public static function getPluralModelLabel(): string
-    {
-        return ActivitylogPlugin::get()->getPluralLabel();
-    }
-
-    public static function getNavigationIcon(): string
-    {
-        return ActivitylogPlugin::get()->getNavigationIcon();
+        return ActivityLogHelper::getActivityModelClass();
     }
 
     public static function getNavigationLabel(): string
     {
-        return Str::title(static::getPluralModelLabel()) ?? Str::title(static::getModelLabel());
+        return static::plugin()->getPluralLabel();
     }
 
-    public static function getNavigationSort(): ?int
+    public static function getModelLabel(): string
     {
-        return ActivitylogPlugin::get()->getNavigationSort();
+        return static::plugin()->getLabel();
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return static::plugin()->getPluralLabel();
     }
 
     public static function getNavigationGroup(): ?string
     {
-        return ActivitylogPlugin::get()->getNavigationGroup();
+        return static::plugin()->getNavigationGroup() ?? static::$navigationGroup;
+    }
+
+    public static function getNavigationIcon(): string|BackedEnum|null
+    {
+        return static::plugin()->getNavigationIcon() ?? static::$navigationIcon;
+    }
+
+    public static function getNavigationSort(): ?int
+    {
+        return static::plugin()->getNavigationSort() ?? static::$navigationSort;
     }
 
     public static function getNavigationBadge(): ?string
     {
-        return ActivitylogPlugin::get()->getNavigationCountBadge() ?
-            number_format(static::getModel()::count()) : null;
-    }
-
-    protected static function getResourceUrl(Activity $record): string
-    {
-        $panelID = Filament::getCurrentOrDefaultPanel()->getId();
-
-        if ($record->subject_type && $record->subject_id) {
-            try {
-                $model = app($record->subject_type);
-
-                if (ActivityLogHelper::classUsesTrait($model, HasCustomActivityResource::class)) {
-                    $resourceModel      = $model->getFilamentActualResourceModel($record);
-                    $resourcePluralName = ActivityLogHelper::getResourcePluralName($resourceModel);
-
-                    return route('filament.' . $panelID . '.resources.' . $resourcePluralName . '.edit', ['record' => $resourceModel->id]);
-                }
-
-                // Fallback to a standard resource mapping
-                $resourcePluralName = ActivityLogHelper::getResourcePluralName($record->subject_type);
-
-                return route('filament.' . $panelID . '.resources.' . $resourcePluralName . '.edit', ['record' => $record->subject_id]);
-            } catch (Exception $e) {
-                // If there's any error generating the URL, return placeholder
-                return '#';
-            }
+        if (! static::plugin()->getNavigationCountBadge()) {
+            return null;
         }
 
-        return '#';
+        $activityClass = static::getModel();
+
+        return number_format($activityClass::query()->count());
     }
 
     public static function form(Schema $schema): Schema
     {
-        return ActivitylogForm::configure($schema);
-    }
-
-    protected static function flattenArrayForKeyValue(array $data): array
-    {
-        $flattened = [];
-
-        foreach ($data as $key => $value) {
-            if (is_array($value) || is_object($value)) {
-                $flattened[$key] = json_encode($value, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
-            } else {
-                $flattened[$key] = $value;
-            }
-        }
-
-        return $flattened;
+        return $schema
+            ->schema([
+                Forms\Components\Section::make()
+                    ->schema([
+                        Forms\Components\TextInput::make('log_name')
+                            ->label(__('filament-activitylog::tables.columns.log_name'))
+                            ->disabled(),
+                        Forms\Components\TextInput::make('event')
+                            ->label(__('filament-activitylog::tables.columns.event'))
+                            ->disabled(),
+                        Forms\Components\TextInput::make('subject_type')
+                            ->label(__('filament-activitylog::tables.columns.subject'))
+                            ->disabled()
+                            ->formatStateUsing(fn ($state) => $state ? class_basename($state) : '-'),
+                        Forms\Components\TextInput::make('subject_id')
+                            ->label('Subject ID')
+                            ->disabled(),
+                        Forms\Components\TextInput::make('causer_type')
+                            ->label(__('filament-activitylog::tables.columns.causer'))
+                            ->disabled()
+                            ->formatStateUsing(fn ($state) => $state ? class_basename($state) : '-'),
+                        Forms\Components\TextInput::make('causer_id')
+                            ->label('Causer ID')
+                            ->disabled(),
+                        Forms\Components\Textarea::make('description')
+                            ->label(__('filament-activitylog::tables.columns.description'))
+                            ->disabled()
+                            ->rows(2),
+                        Forms\Components\KeyValue::make('properties')
+                            ->label(__('filament-activitylog::tables.columns.properties'))
+                            ->disabled(),
+                        Forms\Components\DateTimePicker::make('created_at')
+                            ->label(__('filament-activitylog::tables.columns.created_at'))
+                            ->displayFormat(static::plugin()->getDatetimeFormat() ?? null)
+                            ->disabled(),
+                    ])
+                    ->columns(2),
+            ]);
     }
 
     public static function table(Table $table): Table
     {
-        return $table
+        $table = $table
             ->columns([
-                static::getLogNameColumnComponent(),
-                static::getEventColumnComponent(),
-                static::getSubjectTypeColumnComponent(),
-                static::getCauserNameColumnComponent(),
-                static::getPropertiesColumnComponent(),
-                static::getCreatedAtColumnComponent(),
+                Tables\Columns\TextColumn::make('log_name')
+                    ->label(__('filament-activitylog::tables.columns.log_name'))
+                    ->formatStateUsing(fn (?string $state): string => $state ? ucwords($state) : '-')
+                    ->badge()
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
+                Tables\Columns\TextColumn::make('event')
+                    ->label(__('filament-activitylog::tables.columns.event'))
+                    ->badge()
+                    ->color(fn (string $state): string => ActivityLogHelper::getEventColor($state))
+                    ->formatStateUsing(fn (string $state): string => ActivityLogHelper::getEventLabel($state))
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('subject_type')
+                    ->label(__('filament-activitylog::tables.columns.subject') . ' Type')
+                    ->formatStateUsing(fn (?string $state): string => $state ? class_basename($state) : '-')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('subject_id')
+                    ->label(__('filament-activitylog::tables.columns.subject'))
+                    ->formatStateUsing(function (Model $record): string {
+                        if (! $record->subject) {
+                            return $record->subject_id ? "#{$record->subject_id}" : '-';
+                        }
+
+                        $subject     = $record->subject;
+                        $subjectType = $record->subject_type;
+
+                        if ($subjectType) {
+                            $resourceClass = ActivityLogHelper::getResourceFromModel($subjectType);
+
+                            if ($resourceClass) {
+                                return $resourceClass::getRecordTitle($subject);
+                            }
+                        }
+
+                        return "#{$record->subject_id}";
+                    })
+                    ->searchable()
+                    ->sortable(query: fn (Builder $query, string $direction): Builder => $query->orderBy('subject_id', $direction))
+                    ->toggleable(),
+                Tables\Columns\TextColumn::make('causer.name')
+                    ->label(__('filament-activitylog::tables.columns.causer'))
+                    ->default('-')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
+                ViewColumn::make('properties')
+                    ->label(__('filament-activitylog::tables.columns.properties'))
+                    ->view('filament-activitylog::filament.tables.columns.activity-logs-properties')
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('description')
+                    ->label(__('filament-activitylog::tables.columns.description'))
+                    ->limit(50)
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                static::makeCreatedAtColumn(),
+            ])
+            ->filters([
+                Tables\Filters\SelectFilter::make('log_name')
+                    ->label(__('filament-activitylog::filters.log_name'))
+                    ->options(function () {
+                        $activityClass = ActivityLogHelper::getActivityModelClass();
+
+                        return $activityClass::query()
+                            ->distinct()
+                            ->pluck('log_name', 'log_name')
+                            ->filter()
+                            ->toArray();
+                    })
+                    ->searchable()
+                    ->preload(),
+                Tables\Filters\SelectFilter::make('event')
+                    ->label(__('filament-activitylog::filters.event'))
+                    ->options(function () {
+                        $activityClass = ActivityLogHelper::getActivityModelClass();
+
+                        return $activityClass::query()
+                            ->distinct()
+                            ->pluck('event', 'event')
+                            ->mapWithKeys(fn ($event) => [$event => ActivityLogHelper::getEventLabel($event)])
+                            ->toArray();
+                    })
+                    ->searchable()
+                    ->preload(),
+                Tables\Filters\SelectFilter::make('subject_type')
+                    ->label(__('filament-activitylog::filters.subject_type'))
+                    ->options(function () {
+                        $activityClass = ActivityLogHelper::getActivityModelClass();
+
+                        return $activityClass::query()
+                            ->distinct()
+                            ->pluck('subject_type', 'subject_type')
+                            ->filter()
+                            ->mapWithKeys(fn ($type) => [$type => class_basename($type)])
+                            ->toArray();
+                    })
+                    ->searchable()
+                    ->preload(),
+                Tables\Filters\SelectFilter::make('causer_id')
+                    ->label(__('filament-activitylog::filters.causer'))
+                    ->options(function () {
+                        $userModel = ActivityLogHelper::getUserModelClass();
+
+                        if (! $userModel) {
+                            return [];
+                        }
+
+                        $activityTable = ActivityLogHelper::makeActivityModel()->getTable();
+
+                        return $userModel::query()
+                            ->whereIn('id', function ($query) use ($activityTable) {
+                                $query->select('causer_id')
+                                    ->from($activityTable)
+                                    ->whereNotNull('causer_id')
+                                    ->distinct();
+                            })
+                            ->pluck('name', 'id')
+                            ->toArray();
+                    })
+                    ->searchable()
+                    ->preload(),
+                static::makeCreatedAtFilter(),
+            ])
+            ->actions([
+                ViewBatchTableAction::make()
+                    ->visible(fn (Model $record): bool => $record->batch_uuid !== null),
+                ViewAction::make(),
             ])
             ->defaultSort(
                 config('filament-activitylog.resources.default_sort_column', 'created_at'),
-                config('filament-activitylog.resources.default_sort_direction', 'desc')
+                config('filament-activitylog.resources.default_sort_direction', 'desc'),
             )
-            ->filters([
-                static::getDateFilterComponent(),
-                static::getEventFilterComponent(),
-                static::getLogNameFilterComponent(),
+            ->paginationPageOptions(config('filament-activitylog.pagination.per_page_options', [10, 25, 50, 100]))
+            ->defaultPaginationPageOption(config('filament-activitylog.pagination.default_per_page', 10))
+            ->emptyStateHeading(__('filament-activitylog::resource.empty_state.heading'))
+            ->emptyStateDescription(__('filament-activitylog::resource.empty_state.description'))
+            ->emptyStateIcon('heroicon-o-clipboard-document-list');
+
+        if (config('filament-activitylog.resources.allow_bulk_delete', false)) {
+            $table->bulkActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
             ]);
+        }
+
+        return $table;
+    }
+
+    public static function getRelations(): array
+    {
+        return [];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => Pages\ListActivitylog::route('/'),
+            'view'  => Pages\ViewActivitylog::route('/{record}'),
+        ];
+    }
+
+    public static function canCreate(): bool
+    {
+        return false;
+    }
+
+    public static function canEdit(Model $record): bool
+    {
+        return false;
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return (bool) config('filament-activitylog.resources.allow_delete', false);
+    }
+
+    public static function canDeleteAny(): bool
+    {
+        return (bool) config('filament-activitylog.resources.allow_bulk_delete', false);
     }
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()
-            ->with([
-                'subject' => function ($query) {
-                    if (method_exists($query, 'withTrashed')) {
-                        $query->withTrashed();
-                    }
-                },
-                'causer',
-            ]);
+        $query = parent::getEloquentQuery();
+
+        $relations = [];
+
+        if (config('filament-activitylog.performance.eager_load_subject', true)) {
+            $relations['subject'] = function ($query): void {
+                if (method_exists($query, 'withTrashed')) {
+                    $query->withTrashed();
+                }
+            };
+        }
+
+        if (config('filament-activitylog.performance.eager_load_causer', true)) {
+            $relations[] = 'causer';
+        }
+
+        if ($relations !== []) {
+            $query->with($relations);
+        }
+
+        return $query;
     }
 
-    public static function getLogNameColumnComponent(): Column
+    protected static function makeCreatedAtColumn(): Tables\Columns\TextColumn
     {
-        return TextColumn::make('log_name')
-            ->label(__('activitylog::tables.columns.log_name.label'))
-            ->formatStateUsing(fn ($state) => $state ? ucwords($state) : '-')
-            ->searchable()
+        $column = Tables\Columns\TextColumn::make('created_at')
+            ->label(__('filament-activitylog::tables.columns.created_at'))
+            ->dateTime(static::plugin()->getDatetimeFormat() ?? null)
             ->sortable()
-            ->badge();
-    }
+            ->description(fn (Model $record): string => $record->created_at->format(static::plugin()->getDatetimeFormat() ?? 'M d, Y H:i:s'));
 
-    public static function getEventColumnComponent(): Column
-    {
-        return TextColumn::make('event')
-            ->label(__('activitylog::tables.columns.event.label'))
-            ->formatStateUsing(fn ($state) => $state ? ucwords(__('activitylog::action.event.' . $state)) : '-')
-            ->badge()
-            ->color(fn (?string $state): string => match ($state) {
-                'draft'    => 'gray',
-                'updated'  => 'warning',
-                'created'  => 'success',
-                'deleted'  => 'danger',
-                'restored' => 'info',
-                default    => 'primary',
-            })
-            ->searchable()
-            ->sortable();
-    }
+        if (config('filament-activitylog.relative_time', true)) {
+            $column->since();
+        }
 
-    public static function getSubjectTypeColumnComponent(): Column
-    {
-        return TextColumn::make('subject_type')
-            ->label(__('activitylog::tables.columns.subject_type.label'))
-            ->formatStateUsing(function ($state, Model $record) {
-                /** @var Activity $record */
-                if (! $state) {
-                    return '-';
-                }
-
-                $subjectInfo = Str::of($state)->afterLast('\\')->headline() . ' # ' . $record->subject_id;
-
-                if ($record->subject) {
-                    if (method_exists($record->subject, 'trashed') && $record->subject->trashed()) {
-                        $subjectInfo .= __('activitylog::tables.columns.subject_type.soft_deleted');
-                    }
-                } else {
-                    $subjectInfo .= __('activitylog::tables.columns.subject_type.deleted');
-                }
-
-                return $subjectInfo;
-            })
-            ->searchable()
-            ->hidden(fn (Livewire $livewire) => $livewire instanceof ActivitylogRelationManager);
-    }
-
-    public static function getCauserNameColumnComponent(): Column
-    {
-        return TextColumn::make('causer.name')
-            ->label(__('activitylog::tables.columns.causer.label'))
-            ->getStateUsing(function (Model $record) {
-                /** @var Activity $record */
-                if ($record->causer_id === null || $record->causer === null) {
-                    return new HtmlString('&mdash;');
-                }
-
-                return $record->causer->name ?? new HtmlString('&mdash;');
-            })
-            ->searchable();
-    }
-
-    public static function getPropertiesColumnComponent(): Column
-    {
-        return ViewColumn::make('properties')
-            ->searchable()
-            ->label(__('activitylog::tables.columns.properties.label'))
-            ->view('activitylog::filament.tables.columns.activity-logs-properties')
-            ->toggleable(isToggledHiddenByDefault: true);
-    }
-
-    public static function getCreatedAtColumnComponent(): Column
-    {
-        $column = TextColumn::make('created_at')
-            ->label(__('activitylog::tables.columns.created_at.label'))
-            ->dateTime(ActivitylogPlugin::get()->getDatetimeFormat())
-            ->searchable()
-            ->sortable();
-
-        // Apply the custom callback if set
-        $callback = ActivitylogPlugin::get()->getDatetimeColumnCallback();
-
-        if ($callback) {
+        if ($callback = static::plugin()->getDatetimeColumnCallback()) {
             $column = $callback($column);
         }
 
         return $column;
     }
 
-    public static function getDatePickerCompoment(string $label): DatePicker
+    protected static function makeCreatedAtFilter(): Tables\Filters\Filter
     {
-        $field = DatePicker::make($label)
-            ->format(ActivitylogPlugin::get()->getDateFormat())
-            ->label(__('activitylog::tables.filters.created_at.' . $label));
+        $plugin = static::plugin();
 
-        // Apply the custom callback if set
-        $callback = ActivitylogPlugin::get()->getDatePickerCallback();
-
-        if ($callback) {
-            $field = $callback($field);
-        }
-
-        return $field;
-    }
-
-    public static function getDateFilterComponent(): Filter
-    {
-        return Filter::make('created_at')
-            ->label(__('activitylog::tables.filters.created_at.label'))
-            ->indicateUsing(function (array $data): array {
-                $indicators = [];
-                $parser     = ActivitylogPlugin::get()->getDateParser();
-
-                if ($data['created_from'] ?? null) {
-                    $indicators['created_from'] = __('activitylog::tables.filters.created_at.created_from_indicator', [
-                        'created_from' => $parser($data['created_from'])
-                            ->format(ActivitylogPlugin::get()->getDateFormat()),
-                    ]);
-                }
-
-                if ($data['created_until'] ?? null) {
-                    $indicators['created_until'] = __('activitylog::tables.filters.created_at.created_until_indicator', [
-                        'created_until' => $parser($data['created_until'])
-                            ->format(ActivitylogPlugin::get()->getDateFormat()),
-                    ]);
-                }
-
-                return $indicators;
-            })
-            ->schema([
-                self::getDatePickerCompoment('created_from'),
-                self::getDatePickerCompoment('created_until'),
+        return Tables\Filters\Filter::make('created_at')
+            ->form([
+                static::makeDatePicker('created_from', 'date_from'),
+                static::makeDatePicker('created_until', 'date_until'),
             ])
             ->query(function (Builder $query, array $data): Builder {
                 return $query
@@ -313,245 +383,43 @@ class ActivitylogResource extends Resource
                         $data['created_until'] ?? null,
                         fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
                     );
-            });
-    }
+            })
+            ->indicateUsing(function (array $data) use ($plugin): array {
+                $indicators = [];
+                $parser     = $plugin->getDateParser();
 
-    public static function getEventFilterComponent(): SelectFilter
-    {
-        return SelectFilter::make('event')
-            ->label(__('activitylog::tables.filters.event.label'))
-            ->options(static::getModel()::distinct()
-                ->pluck('event', 'event')
-                ->mapWithKeys(fn ($value, $key) => [$key => __('activitylog::action.event.' . $value)])
-            );
-    }
-
-    public static function getLogNameFilterComponent(): SelectFilter
-    {
-        return SelectFilter::make('log_name')
-            ->label(__('activitylog::tables.filters.log_name.label'))
-            ->options(static::getModel()::distinct()->pluck('log_name', 'log_name')->filter());
-    }
-
-    public static function getPages(): array
-    {
-        return [
-            'index' => ListActivitylog::route('/'),
-            'view'  => ViewActivitylog::route('/{record}'),
-        ];
-    }
-
-    public static function shouldRegisterNavigation(): bool
-    {
-        $plugin = Filament::getCurrentOrDefaultPanel()?->getPlugin('rmsramos/activitylog');
-
-        return $plugin?->getNavigationItem() ?? false;
-    }
-
-    public static function canAccess(): bool
-    {
-        $policy = Gate::getPolicyFor(static::getModel());
-
-        if ($policy && method_exists($policy, 'viewAny')) {
-            return static::canViewAny();
-        }
-
-        return ActivitylogPlugin::get()->isAuthorized();
-    }
-
-    protected static function canViewResource(Activity $record): bool
-    {
-        if ($record->subject_type && $record->subject_id) {
-            try {
-                $model = app($record->subject_type);
-
-                if (ActivityLogHelper::classUsesTrait($model, HasCustomActivityResource::class)) {
-                    $resourceModel = $model->getFilamentActualResourceModel($record);
-                    $user          = auth()->user();
-
-                    return $user && $user->can('update', $resourceModel);
+                if ($data['created_from'] ?? null) {
+                    $formatted    = $parser($data['created_from'])->format($plugin->getDateFormat() ?? 'Y-m-d');
+                    $indicators[] = Tables\Filters\Indicator::make(
+                        __('filament-activitylog::filters.date_from') . ': ' . $formatted
+                    )->removeField('created_from');
                 }
 
-                // Fallback to check if the user can edit the model using a generic policy
-                $user = auth()->user();
+                if ($data['created_until'] ?? null) {
+                    $formatted    = $parser($data['created_until'])->format($plugin->getDateFormat() ?? 'Y-m-d');
+                    $indicators[] = Tables\Filters\Indicator::make(
+                        __('filament-activitylog::filters.date_until') . ': ' . $formatted
+                    )->removeField('created_until');
+                }
 
-                return $user && $record->subject && $user->can('update', $record->subject);
-            } catch (Exception $e) {
-                return false;
-            }
-        }
-
-        return false;
-    }
-
-    public static function restoreActivity(int|string $key): void
-    {
-        $activity = Activity::find($key);
-
-        if (! $activity) {
-            Notification::make()
-                ->title(__('activitylog::notifications.activity_not_found'))
-                ->danger()
-                ->send();
-
-            return;
-        }
-
-        $oldProperties = data_get($activity, 'properties.old');
-        $newProperties = data_get($activity, 'properties.attributes');
-
-        if ($oldProperties === null) {
-            Notification::make()
-                ->title(__('activitylog::notifications.no_properties_to_restore'))
-                ->danger()
-                ->send();
-
-            return;
-        }
-
-        try {
-            $record = $activity->subject;
-
-            if (! $record) {
-                Notification::make()
-                    ->title(__('activitylog::notifications.subject_not_found'))
-                    ->danger()
-                    ->send();
-
-                return;
-            }
-
-            // Temporarily disable activity logging to prevent updated log
-            activity()->withoutLogs(function () use ($record, $oldProperties) {
-                $record->update($oldProperties);
+                return $indicators;
             });
-
-            if (auth()->user()) {
-                activity()
-                    ->performedOn($record)
-                    ->causedBy(auth()->user())
-                    ->withProperties([
-                        'attributes' => $oldProperties,
-                        'old'        => $newProperties,
-                    ])
-                    ->tap(function ($log) {
-                        $log->event = 'restored';
-                    })
-                    ->log('restored');
-            }
-
-            Notification::make()
-                ->title(__('activitylog::notifications.activity_restored_successfully'))
-                ->success()
-                ->send();
-        } catch (ModelNotFoundException $e) {
-            Notification::make()
-                ->title(__('activitylog::notifications.record_not_found'))
-                ->danger()
-                ->send();
-        } catch (Exception $e) {
-            Notification::make()
-                ->title(__('activitylog::notifications.failed_to_restore_activity', ['error' => $e->getMessage()]))
-                ->danger()
-                ->send();
-        }
     }
 
-    public static function canRestoreSubjectFromSoftDelete(Activity $record): bool
+    protected static function makeDatePicker(string $field, string $labelKey): Forms\Components\DatePicker
     {
-        if (ActivitylogPlugin::get()->getIsRestoreModelActionHidden()) {
-            return false;
+        $picker = Forms\Components\DatePicker::make($field)
+            ->label(__("filament-activitylog::filters.{$labelKey}"))
+            ->placeholder(__("filament-activitylog::filters.{$labelKey}"));
+
+        if ($format = static::plugin()->getDateFormat()) {
+            $picker->displayFormat($format);
         }
 
-        if ($record->event !== 'deleted') {
-            return false;
+        if ($callback = static::plugin()->getDatePickerCallback()) {
+            $picker = $callback($picker);
         }
 
-        if (! $record->subject) {
-            return false;
-        }
-
-        if (! method_exists($record->subject, 'trashed') ||
-            ! method_exists($record->subject, 'restore')) {
-            return false;
-        }
-
-        if (! $record->subject->trashed()) {
-            return false;
-        }
-
-        $user = auth()->user();
-
-        if ($user && method_exists($record->subject, 'exists')) {
-            try {
-                return $user->can('restore', $record->subject);
-            } catch (Exception $e) {
-                return true;
-            }
-        }
-
-        return true;
-    }
-
-    public static function restoreSubjectFromSoftDelete(Activity $record): void
-    {
-        if (! static::canRestoreSubjectFromSoftDelete($record)) {
-            Notification::make()
-                ->title(__('activitylog::notifications.unable_to_restore_this_model'))
-                ->danger()
-                ->send();
-
-            return;
-        }
-
-        try {
-            DB::beginTransaction();
-
-            $subject = $record->subject;
-
-            $beforeRestore = $subject->toArray();
-
-            activity()->withoutLogs(function () use ($subject) {
-                $subject->restore();
-            });
-
-            $subject->refresh();
-            $afterRestore = $subject->toArray();
-
-            if (auth()->user()) {
-                activity()
-                    ->performedOn($subject)
-                    ->causedBy(auth()->user())
-                    ->withProperties([
-                        'attributes'       => $afterRestore,
-                        'old'              => $beforeRestore,
-                        'restore_metadata' => [
-                            'restored_from_soft_delete' => true,
-                            'original_activity_id'      => $record->id,
-                            'restore_type'              => 'soft_delete',
-                        ],
-                    ])
-                    ->tap(function ($log) {
-                        $log->event = 'restored';
-                    })
-                    ->log('restored');
-            }
-
-            DB::commit();
-
-            Notification::make()
-                ->title(__('activitylog::notifications.model_successfully_restored'))
-                ->success()
-                ->send();
-
-        } catch (Exception $e) {
-            DB::rollBack();
-
-            Notification::make()
-                ->title(__('activitylog::notifications.error_restoring_model'))
-                ->body('Erro: ' . $e->getMessage())
-                ->danger()
-                ->send();
-        }
+        return $picker;
     }
 }

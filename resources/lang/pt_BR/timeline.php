@@ -1,15 +1,17 @@
 <?php
 
 return [
-    'title' => [
-        'modifiedTitle' => 'O <strong>%s</strong> foi <strong>%s</strong> por <strong>%s</strong>. <br><small> Atualizado em: <strong>%s</strong></small>',
+    'modal' => [
+        'heading'     => 'Linha do tempo de atividades',
+        'description' => 'Veja o histórico completo de alterações deste registro.',
     ],
-    'properties' => [
-        'modifiedProperties'     => '%s %s o seguinte: <br>%s',
-        'compareOldAndNewValues' => [
-            'notEquals' => '- %s de <strong>%s</strong> para <strong>%s</strong>',
-            'equals'    => '- %s <strong>%s</strong>',
-        ],
-        'getNewValues' => '- %s <strong>%s</strong>',
-    ],
+    'action_label'       => 'Linha do tempo de atividades',
+    'title'              => '<strong>:subject</strong> :event por <strong>:causer</strong> :timestamp',
+    'properties_updated' => '<strong>:causer</strong> :event:<br>:changes',
+    'change_from_to'     => '<strong>:field</strong>: de "<em>:old</em>" para "<em>:new</em>"',
+    'set_to'             => '<strong>:field</strong>: definido como "<em>:value</em>"',
+    'unknown_user'       => 'Usuário desconhecido',
+    'unknown_subject'    => 'Desconhecido',
+    'system'             => 'Sistema',
+    'empty'              => 'Ainda não há atividades registradas.',
 ];

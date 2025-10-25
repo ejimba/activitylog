@@ -2,40 +2,23 @@
 
 return [
     'columns' => [
-        'log_name' => [
-            'label' => 'Type',
-        ],
-        'event' => [
-            'label' => 'Event',
-        ],
-        'subject_type' => [
-            'label'        => 'Subject',
-            'soft_deleted' => ' (Soft Deleted)',
-            'deleted'      => ' (Deleted)',
-        ],
-        'causer' => [
-            'label' => 'User',
-        ],
-        'properties' => [
-            'label' => 'Properties',
-        ],
-        'created_at' => [
-            'label' => 'Logged at',
-        ],
+        'event'       => 'Event',
+        'subject'     => 'Subject',
+        'causer'      => 'User',
+        'description' => 'Description',
+        'created_at'  => 'Date',
+        'properties'  => 'Changes',
+        'batch'       => 'Batch',
+        'log_name'    => 'Log Name',
     ],
-    'filters' => [
-        'created_at' => [
-            'label'                   => 'Logged at',
-            'created_from'            => 'Created from ',
-            'created_from_indicator'  => 'Created from  : :created_from',
-            'created_until'           => 'Created until ',
-            'created_until_indicator' => 'Created until  : :created_until',
-        ],
-        'event' => [
-            'label' => 'Event',
-        ],
-        'log_name' => [
-            'label' => 'Log name',
-        ],
-    ],
+    'field'         => 'Field',
+    'old'           => 'Old Value',
+    'new'           => 'New Value',
+    'restore'       => 'Restore',
+    'restoring'     => 'Restoring...',
+    'empty'         => 'Empty',
+    'true'          => 'True',
+    'false'         => 'False',
+    'no_changes'    => 'No changes were recorded for this activity.',
+    'no_activities' => 'No activities recorded yet.',
 ];

@@ -1,33 +1,23 @@
 <?php
 return [
     'columns' => [
-        'log_name' => [
-            'label' => 'Type',
-        ],
-        'event' => [
-            'label' => 'Événement',
-        ],
-        'subject_type' => [
-            'label' => 'Sujet',
-        ],
-        'causer' => [
-            'label' => 'Utilisateur',
-        ],
-        'properties' => [
-            'label' => 'Propriétés',
-        ],
-        'created_at' => [
-            'label' => 'Enregistré à',
-        ],
+        'event'       => 'Événement',
+        'subject'     => 'Sujet',
+        'causer'      => 'Utilisateur',
+        'description' => 'Description',
+        'created_at'  => 'Date',
+        'properties'  => 'Modifications',
+        'batch'       => 'Lot',
+        'log_name'    => 'Nom du journal',
     ],
-    'filters' => [
-        'created_at' => [
-            'label'         => 'Enregistré à',
-            'created_from'  => 'Créé à partir de ',
-            'created_until' => 'Créé jusqu\'à ',
-        ],
-        'event' => [
-            'label' => 'Événement',
-        ],
-    ],
+    'field'         => 'Champ',
+    'old'           => 'Ancienne valeur',
+    'new'           => 'Nouvelle valeur',
+    'restore'       => 'Restaurer',
+    'restoring'     => 'Restauration...',
+    'empty'         => 'Vide',
+    'true'          => 'Vrai',
+    'false'         => 'Faux',
+    'no_changes'    => 'Aucune modification n’a été enregistrée pour cette activité.',
+    'no_activities' => 'Aucune activité enregistrée pour le moment.',
 ];

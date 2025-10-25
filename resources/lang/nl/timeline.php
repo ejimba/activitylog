@@ -1,14 +1,17 @@
 <?php
+
 return [
-    'title' => [
-        'modifiedTitle' => 'De <strong>%s</strong> is <strong>%s</strong> door <strong>%s</strong>. <br><small> Geupdate om: <strong>%s</strong></small>',
+    'modal' => [
+        'heading'     => 'Activiteitentijdlijn',
+        'description' => 'Bekijk de volledige wijzigingsgeschiedenis voor dit record.',
     ],
-    'properties' => [
-        'modifiedProperties'     => '%s %s het volgende: <br>%s',
-        'compareOldAndNewValues' => [
-            'notEquals' => '- %s van <strong>%s</strong> tot <strong>%s</strong>',
-            'equals'    => '- %s <strong>%s</strong>',
-        ],
-        'getNewValues' => '- %s <strong>%s</strong>',
-    ],
+    'action_label'       => 'Activiteitentijdlijn',
+    'title'              => '<strong>:subject</strong> :event door <strong>:causer</strong> :timestamp',
+    'properties_updated' => '<strong>:causer</strong> :event:<br>:changes',
+    'change_from_to'     => '<strong>:field</strong>: van "<em>:old</em>" naar "<em>:new</em>"',
+    'set_to'             => '<strong>:field</strong>: ingesteld op "<em>:value</em>"',
+    'unknown_user'       => 'Onbekende gebruiker',
+    'unknown_subject'    => 'Onbekend',
+    'system'             => 'Systeem',
+    'empty'              => 'Er is nog geen activiteit geregistreerd.',
 ];

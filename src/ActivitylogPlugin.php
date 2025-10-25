@@ -7,6 +7,7 @@ use Filament\Contracts\Plugin;
 use Filament\Panel;
 use Filament\Support\Concerns\EvaluatesClosures;
 use Illuminate\Support\Carbon;
+use Rmsramos\Activitylog\Resources\Activitylogs\ActivitylogResource;
 
 class ActivitylogPlugin implements Plugin
 {
@@ -20,11 +21,13 @@ class ActivitylogPlugin implements Plugin
 
     protected bool|Closure $isResourceActionHidden = false;
 
-    protected bool|Closure $isRestoreActionHidden = false;
+    protected bool|Closure|null $isRestoreActionHidden = null;
 
-    protected bool|Closure $isRestoreModelActionHidden = true;
+    protected bool|Closure|null $isRestoreModelActionHidden = null;
 
     protected Closure|bool $navigationItem = true;
+
+    protected Closure|bool $includeResource = true;
 
     protected string|Closure|null $navigationGroup = null;
 
@@ -38,9 +41,9 @@ class ActivitylogPlugin implements Plugin
 
     protected ?Closure $datePickerCallback = null;
 
-    protected ?Closure $translateSubject = null;
+    protected string|Closure|null $translateSubject = null;
 
-    protected ?Closure $translateLogKey = null;
+    protected string|Closure|null $translateLogKey = null;
 
     protected ?string $navigationIcon = null;
 
@@ -64,10 +67,11 @@ class ActivitylogPlugin implements Plugin
 
     public function register(Panel $panel): void
     {
-        $panel
-            ->resources([
+        if ($this->shouldIncludeResource()) {
+            $panel->resources([
                 $this->getResource(),
             ]);
+        }
     }
 
     public function boot(Panel $panel): void
@@ -82,57 +86,70 @@ class ActivitylogPlugin implements Plugin
 
     public function getResource(): string
     {
-        return $this->resource ?? config('filament-activitylog.resources.resource');
+        return $this->resource ?? $this->config('resources.class', ActivitylogResource::class);
     }
 
     public function getLabel(): string
     {
-        return $this->evaluate($this->label) ?? config('filament-activitylog.resources.label');
+        return $this->evaluate($this->label)
+            ?? $this->config('resources.label')
+            ?? __('filament-activitylog::resource.label');
     }
 
     public function getResourceActionLabel(): string
     {
-        return $this->evaluate($this->resourceActionLabel) ?? config('filament-activitylog.resources.resource_action_label');
+        return $this->evaluate($this->resourceActionLabel)
+            ?? $this->config('resources.resource_action_label')
+            ?? 'View Activity Log';
     }
 
     public function getIsResourceActionHidden(): bool
     {
-        return $this->evaluate($this->isResourceActionHidden) ?? config('filament-activitylog.resources.hide_resource_action');
+        return $this->evaluate($this->isResourceActionHidden)
+            ?? (bool) $this->config('resources.hide_resource_action', false);
     }
 
     public function getIsRestoreActionHidden(): bool
     {
-        return $this->evaluate($this->isRestoreActionHidden) ?? config('filament-activitylog.resources.hide_restore_action');
+        return $this->evaluate($this->isRestoreActionHidden)
+            ?? (bool) $this->config('resources.hide_restore_action', false);
     }
 
     public function getIsRestoreModelActionHidden(): bool
     {
-        return $this->evaluate($this->isRestoreModelActionHidden) ?? config('filament-activitylog.resources.hide_restore_model_action');
+        return $this->evaluate($this->isRestoreModelActionHidden)
+            ?? (bool) $this->config('resources.hide_restore_model_action', true);
     }
 
     public function getPluralLabel(): string
     {
-        return $this->evaluate($this->pluralLabel) ?? config('filament-activitylog.resources.plural_label');
+        return $this->evaluate($this->pluralLabel)
+            ?? $this->config('resources.plural_label')
+            ?? __('filament-activitylog::resource.plural_label');
     }
 
     public function getNavigationItem(): bool
     {
-        return $this->evaluate($this->navigationItem) ?? config('filament-activitylog.resources.navigation_item');
+        return (bool) ($this->evaluate($this->navigationItem)
+            ?? $this->config('resources.navigation_item', true));
     }
 
     public function getNavigationGroup(): ?string
     {
-        return $this->evaluate($this->navigationGroup) ?? config('filament-activitylog.resources.navigation_group');
+        return $this->evaluate($this->navigationGroup)
+            ?? $this->config('resources.navigation_group');
     }
 
     public function getDateFormat(): ?string
     {
-        return $this->evaluate($this->dateFormat) ?? config('filament-activitylog.date_format');
+        return $this->evaluate($this->dateFormat)
+            ?? $this->config('date_format');
     }
 
     public function getDatetimeFormat(): ?string
     {
-        return $this->evaluate($this->datetimeFormat) ?? config('filament-activitylog.datetime_format');
+        return $this->evaluate($this->datetimeFormat)
+            ?? $this->config('datetime_format');
     }
 
     public function getDatetimeColumnCallback(): ?Closure
@@ -151,9 +168,7 @@ class ActivitylogPlugin implements Plugin
             return $label;
         }
 
-        $callable = $this->translateSubject;
-
-        return $callable($label);
+        return value($this->translateSubject, $label);
     }
 
     public function getTranslateLogKey($label): ?string
@@ -162,9 +177,7 @@ class ActivitylogPlugin implements Plugin
             return $label;
         }
 
-        $callable = $this->translateLogKey;
-
-        return $callable($label);
+        return value($this->translateLogKey, $label);
     }
 
     public function getDateParser(): ?Closure
@@ -174,17 +187,27 @@ class ActivitylogPlugin implements Plugin
 
     public function getNavigationIcon(): ?string
     {
-        return $this->navigationIcon ?? config('filament-activitylog.resources.navigation_icon');
+        return $this->navigationIcon
+            ?? $this->config('resources.navigation_icon');
     }
 
     public function getNavigationSort(): ?int
     {
-        return $this->navigationSort ?? config('filament-activitylog.resources.navigation_sort');
+        return $this->navigationSort
+            ?? $this->config('resources.navigation_sort');
     }
 
     public function getNavigationCountBadge(): ?bool
     {
-        return $this->navigationCountBadge ?? config('filament-activitylog.resources.navigation_count_badge');
+        return $this->navigationCountBadge
+            ?? $this->config('resources.navigation_count_badge', false);
+    }
+
+    public function includeResource(bool|Closure $include = true): static
+    {
+        $this->includeResource = $include;
+
+        return $this;
     }
 
     public function resource(string $resource): static
@@ -330,5 +353,17 @@ class ActivitylogPlugin implements Plugin
     public function isAuthorized(): bool
     {
         return $this->evaluate($this->authorizeUsing) === true;
+    }
+
+    protected function config(string $key, mixed $default = null): mixed
+    {
+        return config("filament-activitylog.$key", $default);
+    }
+
+    protected function shouldIncludeResource(): bool
+    {
+        $include = $this->evaluate($this->includeResource);
+
+        return ($include ?? true) && (bool) $this->config('resources.enabled', true);
     }
 }

@@ -1,34 +1,23 @@
 <?php
-
 return [
     'columns' => [
-        'log_name' => [
-            'label' => 'Jenis',
-        ],
-        'event' => [
-            'label' => 'Peristiwa',
-        ],
-        'subject_type' => [
-            'label' => 'Subjek',
-        ],
-        'causer' => [
-            'label' => 'Pengguna',
-        ],
-        'properties' => [
-            'label' => 'Properti',
-        ],
-        'created_at' => [
-            'label' => 'Masuk di',
-        ],
+        'event'       => 'Peristiwa',
+        'subject'     => 'Subjek',
+        'causer'      => 'Pengguna',
+        'description' => 'Deskripsi',
+        'created_at'  => 'Tanggal',
+        'properties'  => 'Perubahan',
+        'batch'       => 'Batch',
+        'log_name'    => 'Nama Log',
     ],
-    'filters' => [
-        'created_at' => [
-            'label'         => 'Masuk di',
-            'created_from'  => 'Dibuat dari',
-            'created_until' => 'Dibuat sampai',
-        ],
-        'event' => [
-            'label' => 'Peristiwa',
-        ],
-    ],
+    'field'         => 'Bidang',
+    'old'           => 'Nilai Lama',
+    'new'           => 'Nilai Baru',
+    'restore'       => 'Pulihkan',
+    'restoring'     => 'Memulihkan...',
+    'empty'         => 'Kosong',
+    'true'          => 'Benar',
+    'false'         => 'Salah',
+    'no_changes'    => 'Tidak ada perubahan yang tercatat untuk aktivitas ini.',
+    'no_activities' => 'Belum ada aktivitas yang tercatat.',
 ];

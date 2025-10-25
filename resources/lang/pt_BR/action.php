@@ -1,23 +1,11 @@
 <?php
 
 return [
-    'modal' => [
-        'heading'     => 'Registro de Logs do usuário',
-        'description' => 'Acompanhe todas as atividades do usuário',
-        'tooltip'     => 'Atividades do usuário',
-    ],
-    'event' => [
-        'created'  => 'criado',
-        'deleted'  => 'excluído',
-        'updated'  => 'atualizado',
-        'restored' => 'restaurado',
-    ],
-    'view'                => 'Visualizar',
-    'edit'                => 'Editar',
-    'restore'             => 'Restaurar',
-    'restore_soft_delete' => [
-        'label'             => 'Restaurar Modelo',
-        'modal_heading'     => 'Restaurar Modelo Excluído',
-        'modal_description' => 'Isso irá restaurar o modelo que foi excluído (soft delete).',
-    ],
+    'view_batch'                => 'Ver lote',
+    'prune'                     => 'Limpar logs antigos',
+    'prune_confirm_title'       => 'Limpar registros de atividade',
+    'prune_confirm_description' => 'Isso excluir\u00e1 permanentemente registros de atividade mais antigos do que o per\u00edodo de reten\u00e7\u00e3o configurado. Esta a\u00e7\u00e3o n\u00e3o pode ser desfeita.',
+    'prune_success'             => 'Exclu\u00eddos com sucesso :count registro(s) de atividade',
+    'close'                     => 'Fechar',
+    'export'                    => 'Exportar atividades',
 ];

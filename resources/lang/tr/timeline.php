@@ -1,14 +1,17 @@
 <?php
+
 return [
-    'title' => [
-        'modifiedTitle' => 'The <strong>%s</strong> was <strong>%s</strong> by <strong>%s</strong>. <br><small> Updated at: <strong>%s</strong></small>',
+    'modal' => [
+        'heading'     => 'Aktivite Zaman Çizelgesi',
+        'description' => 'Bu kaydın değişikliklerinin tam geçmişini görüntüleyin.',
     ],
-    'properties' => [
-        'modifiedProperties'     => '%s %s the following: <br>%s',
-        'compareOldAndNewValues' => [
-            'notEquals' => '- %s from <strong>%s</strong> to <strong>%s</strong>',
-            'equals'    => '- %s <strong>%s</strong>',
-        ],
-        'getNewValues' => '- %s <strong>%s</strong>',
-    ],
+    'action_label'       => 'Aktivite Zaman Çizelgesi',
+    'title'              => '<strong>:subject</strong> :event, <strong>:causer</strong> tarafından :timestamp',
+    'properties_updated' => '<strong>:causer</strong> :event:<br>:changes',
+    'change_from_to'     => '<strong>:field</strong>: "<em>:old</em>" değerinden "<em>:new</em>" değerine',
+    'set_to'             => '<strong>:field</strong>: "<em>:value</em>" olarak ayarlandı',
+    'unknown_user'       => 'Bilinmeyen Kullanıcı',
+    'unknown_subject'    => 'Bilinmiyor',
+    'system'             => 'Sistem',
+    'empty'              => 'Henüz herhangi bir aktivite kaydedilmedi.',
 ];

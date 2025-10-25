@@ -1,34 +1,23 @@
 <?php
-
 return [
     'columns' => [
-        'log_name' => [
-            'label' => 'Typ',
-        ],
-        'event' => [
-            'label' => 'Zdarzenie',
-        ],
-        'subject_type' => [
-            'label' => 'Element',
-        ],
-        'causer' => [
-            'label' => 'Użytkownik',
-        ],
-        'properties' => [
-            'label' => 'Właściwości',
-        ],
-        'created_at' => [
-            'label' => 'Data zdarzenia',
-        ],
+        'event'       => 'Zdarzenie',
+        'subject'     => 'Obiekt',
+        'causer'      => 'Użytkownik',
+        'description' => 'Opis',
+        'created_at'  => 'Data',
+        'properties'  => 'Zmiany',
+        'batch'       => 'Partia',
+        'log_name'    => 'Nazwa dziennika',
     ],
-    'filters' => [
-        'created_at' => [
-            'label'         => 'Data zdarzenia',
-            'created_from'  => 'Utworzony od ',
-            'created_until' => 'Utworzony do ',
-        ],
-        'event' => [
-            'label' => 'Zdarzenie',
-        ],
-    ],
+    'field'         => 'Pole',
+    'old'           => 'Stara wartość',
+    'new'           => 'Nowa wartość',
+    'restore'       => 'Przywróć',
+    'restoring'     => 'Przywracanie...',
+    'empty'         => 'Puste',
+    'true'          => 'Prawda',
+    'false'         => 'Fałsz',
+    'no_changes'    => 'Brak zarejestrowanych zmian dla tej aktywności.',
+    'no_activities' => 'Nie zarejestrowano jeszcze żadnych aktywności.',
 ];

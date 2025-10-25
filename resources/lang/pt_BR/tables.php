@@ -1,38 +1,23 @@
 <?php
-
 return [
     'columns' => [
-        'log_name' => [
-            'label' => 'Tipo',
-        ],
-        'event' => [
-            'label' => 'Evento',
-        ],
-        'subject_type' => [
-            'label'        => 'Assunto',
-            'soft_deleted' => ' (Delete suave)',
-            'deleted'      => ' (Deletado)',
-        ],
-        'causer' => [
-            'label' => 'Usuário',
-        ],
-        'properties' => [
-            'label' => 'Propriedades',
-        ],
-        'created_at' => [
-            'label' => 'Criado em',
-        ],
+        'event'       => 'Evento',
+        'subject'     => 'Assunto',
+        'causer'      => 'Usuário',
+        'description' => 'Descrição',
+        'created_at'  => 'Data',
+        'properties'  => 'Alterações',
+        'batch'       => 'Lote',
+        'log_name'    => 'Nome do log',
     ],
-    'filters' => [
-        'created_at' => [
-            'label'                   => 'Criado em',
-            'created_from'            => 'Criado a partir de ',
-            'created_from_indicator'  => 'Criado a partir de  : :created_from',
-            'created_until'           => 'Criado até ',
-            'created_until_indicator' => 'Criado até  : :created_until',
-        ],
-        'event' => [
-            'label' => 'Eventos',
-        ],
-    ],
+    'field'         => 'Campo',
+    'old'           => 'Valor antigo',
+    'new'           => 'Novo valor',
+    'restore'       => 'Restaurar',
+    'restoring'     => 'Restaurando...',
+    'empty'         => 'Vazio',
+    'true'          => 'Verdadeiro',
+    'false'         => 'Falso',
+    'no_changes'    => 'Nenhuma alteração foi registrada para esta atividade.',
+    'no_activities' => 'Nenhuma atividade registrada ainda.',
 ];
