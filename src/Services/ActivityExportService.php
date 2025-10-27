@@ -18,12 +18,13 @@ class ActivityExportService
     {
         $fileName = $fileName ?: 'activities-' . now()->format('Y-m-d-His') . '.xlsx';
         $filePath = 'exports/' . $fileName;
+        $disk     = config('filament-activitylog.export.disk', 'local');
 
         $export = new \Rmsramos\Activitylog\Exports\ActivitiesExport($query, $options);
 
-        Excel::store($export, $filePath, 'local');
+        Excel::store($export, $filePath, $disk);
 
-        return Storage::path($filePath);
+        return Storage::disk($disk)->path($filePath);
     }
 
     /**
@@ -174,12 +175,14 @@ class ActivityExportService
      */
     public function cleanupOldExports(int $days = 7): int
     {
-        $files   = Storage::files('exports');
+        $disk    = config('filament-activitylog.export.disk', 'local');
+        $storage = Storage::disk($disk);
+        $files   = $storage->files('exports');
         $deleted = 0;
 
         foreach ($files as $file) {
-            if (Storage::lastModified($file) < now()->subDays($days)->timestamp) {
-                Storage::delete($file);
+            if ($storage->lastModified($file) < now()->subDays($days)->timestamp) {
+                $storage->delete($file);
                 $deleted++;
             }
         }

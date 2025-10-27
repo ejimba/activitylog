@@ -4,7 +4,9 @@ namespace Rmsramos\Activitylog;
 
 use Filament\Support\Assets\Css;
 use Filament\Support\Facades\FilamentAsset;
+use Illuminate\Support\Facades\Route;
 use Rmsramos\Activitylog\Extensions\LogActions;
+use Rmsramos\Activitylog\Http\Controllers\DownloadExportController;
 use Rmsramos\Activitylog\Loggers\LoggerRegistry;
 use Rmsramos\Activitylog\Services\ActivityExportService;
 use Rmsramos\Activitylog\Services\ActivityNotificationService;
@@ -78,6 +80,21 @@ class ActivitylogServiceProvider extends PackageServiceProvider
 
         if (config('filament-activitylog.notifications.enabled')) {
             $this->app->make(ActivityNotificationService::class)->register();
+        }
+
+        if (
+            config('filament-activitylog.export.enabled', true)
+            && ! Route::has('filament-activitylog.export.download')
+        ) {
+            $middleware = array_merge(
+                (array) config('filament.middleware.base', ['web']),
+                (array) config('filament.middleware.auth', [])
+            );
+
+            Route::middleware($middleware)
+                ->name('filament-activitylog.export.download')
+                ->get('filament/activity-log/export/{file}', DownloadExportController::class)
+                ->where('file', '.*');
         }
     }
 }

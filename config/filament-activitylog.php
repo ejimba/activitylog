@@ -163,14 +163,13 @@ return [
     ],
     'export' => [
         'enabled'        => env('ACTIVITY_LOG_EXPORT_ENABLED', true),
+        'disk'           => env('ACTIVITY_LOG_EXPORT_DISK', 'local'),
         'download_route' => null,
         'limits' => [
             'max_records' => 10000,
-
         ],
         'excel' => [
             'include_summary' => true,
-
         ],
     ],
 ];

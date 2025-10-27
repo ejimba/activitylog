@@ -85,11 +85,14 @@ class ExportActivitiesAction extends Action
                     // Get download URL
                     $fileName    = basename($filePath);
                     $downloadUrl = null;
+                    $routeName   = config('filament-activitylog.export.download_route');
 
-                    if ($routeName = config('filament-activitylog.export.download_route')) {
-                        if (app('router')->has($routeName)) {
-                            $downloadUrl = route($routeName, ['file' => $fileName]);
-                        }
+                    if ($routeName === null) {
+                        $routeName = 'filament-activitylog.export.download';
+                    }
+
+                    if ($routeName && app('router')->has($routeName)) {
+                        $downloadUrl = route($routeName, ['file' => $fileName]);
                     }
 
                     $body = $downloadUrl
